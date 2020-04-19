@@ -6,16 +6,15 @@ In this repo you will find some given express server configured to make some CRU
 
 ---
 
-## Assessment 1
+## Assessment 1 (Junior level friendly)
 
-> **Junior level** friendly, any other level could benefit from it as well.
-
-1. You should first [Setup MongoDB](https://docs.mongodb.com/manual/installation/) locally and copy the connection url to the required place in `server/models/mongo.config.js` then run `nom start` in the server folder, after that you are not supposed to look back into that file any more.
-2. Implement the frontend code to make it works with the basic functionality as follow:
-   - Submit request. (API: POST -> `/video-request`)
+1. After cloning the repo and installing the dependancies in the server folder, you should next [setup mongodb](https://docs.mongodb.com/manual/installation/) locally and copy the connection url to the required place in `server/models/mongo.config.js` then run `npm start` in the server folder, after that you are not supposed to do anything else into that folder anymore.
+2. Implement the frontend code to make it work with the basic functionality as follow:
+   - Submit a video request. (API: POST -> `/video-request`)
    - Show list of requests below the form. (API: GET -> `/video-request`)
    - Vote up and down on each request. (API: PUT -> `/video-request/vote`)
-	- client-side validation for the fields with * as required and for the email field, topic title should be max 100 char as well.
-	- check all payloads in the schema at `server/models/video-requests.model.js` and check the endpoints at `server/index.js`
-3. You are **obligated** to write only **Pure JavaScript** code without using any external utility or libraries.
-4. You should not write any css code or styling effort as the provided `index.html` file has all what you need.
+	- Client-side validation for the fields with * as required and for the email field, topic title should be max 100 char as well.
+   - You are supposed after all to make the requests work using AJAX.
+3. Check all payloads in the schema at `server/models/video-requests.model.js` and check the endpoints at `server/index.js`
+4. You are **obligated** to write only **pure JavaScript** code without using any external utility or libraries.
+5. You should not write any css code or styling effort as the provided `index.html` file has all what you need.
