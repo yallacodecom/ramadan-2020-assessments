@@ -3,9 +3,12 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 7777;
 const VideoRequestData = require('./data/video-requests.data');
-var mongoose = require('./models/mongo.config');
+const cors = require('cors');
+const mongoose = require('./models/mongo.config');
 
 if (!Object.keys(mongoose).length) return;
+
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 

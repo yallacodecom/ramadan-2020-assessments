@@ -8,7 +8,7 @@ In this repo you will find some given express server configured to make some CRU
 
 ## Assessment 1 (Junior level friendly)
 
-1. After cloning the repo and installing the dependancies in the server folder, you should next [setup mongodb](https://docs.mongodb.com/manual/installation/) locally and copy the connection url to the required place in `server/models/mongo.config.js` then run `npm start` in the server folder, after that you are not supposed to do anything else into that folder anymore.
+1. After cloning the repo and installing the dependancies in the server folder, you should next [setup mongodb](https://docs.mongodb.com/manual/installation/) locally and copy the connection url to the required place in `server/models/mongo.config.js` then run `npm start` in the server folder, after that you are not supposed to do anything else into that folder anymore unless you would like to enhance it for a better experience.
 2. Implement the frontend code to make it work with the basic functionality as follow:
    - Submit a video request. (API: POST -> `/video-request`)
    - Show list of requests below the form. (API: GET -> `/video-request`)
