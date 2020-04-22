@@ -34,6 +34,20 @@ app.put('/video-request', async (req, res, next) => {
   next();
 });
 
+app.get('/users', async (req, res, next) => {
+  const response = await UserData.getAllUsers(req.body);
+  res.send(response);
+  next();
+});
+
+app.post('/users/login', async (req, res, next) => {
+  const response = await UserData.createUser(req.body);
+  res.redirect(`http://localhost:5500?id=${response._id}`);
+  next();
+});
+
+app.use(express.json());
+
 app.put('/video-request/vote', async (req, res, next) => {
   const { id, vote_type } = req.body;
   const response = await VideoRequestData.updateVoteForRequest(id, vote_type);
