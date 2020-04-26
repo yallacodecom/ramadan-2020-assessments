@@ -12,7 +12,7 @@
   <body>
     <div class="container my-5">
       <div class="formContainer my-5">
-        <form action="" method="POST">
+        <form id="videoForm" action="" method="POST">
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -85,7 +85,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-success mt-3">
+          <button type="submit" class="btn btn-success mt-3" id="submitBTN">
             Send video request
           </button>
         </form>
@@ -125,5 +125,50 @@
         </div>
       </div>
     </div>
+
+    <script>
+      let videoForm = document.getElementById("videoForm").elements;
+
+      const author_name = videoForm.item(0).placeholder;
+      const author_email = videoForm.item(1).placeholder;
+      const topic_title = videoForm.item(2).placeholder;
+      const target_level = videoForm.item(3).placeholder;
+      const topic_details = videoForm.item(4).placeholder;
+      const expected_result = videoForm.item(5).placeholder;
+      const formBtn = videoForm.item(6);
+
+      document;
+      formBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        const data = {
+          author_name,
+          author_name,
+          topic_title,
+          target_level,
+          topic_details,
+          expected_result,
+        };
+
+        const options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        };
+        fetch("http://localhost:7777/video-request", options)
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+
+      // function handleVideoRequest(e) {
+      //   e.preventDefault();
+
+      // }
+    </script>
   </body>
 </html>
