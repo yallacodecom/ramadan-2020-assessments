@@ -7,13 +7,18 @@ function getSingleVidReq(vidInfo) {
         <h3>${vidInfo.topic_title}</h3>
         <p class="text-muted mb-2">${vidInfo.topic_details}</p>
         <p class="mb-0 text-muted">
-          <strong>Expected results:</strong> ${vidInfo.expected_result}
+          ${
+            vidInfo.expected_result &&
+            `<strong>Expected results:</strong> ${vidInfo.expected_result}`
+          }
         </p>
       </div>
       <div class="d-flex flex-column text-center">
-        <a class="btn btn-link">🔺</a>
-        <h3>0</h3>
-        <a class="btn btn-link">🔻</a>
+        <a id="votes_ups_${vidInfo._id}" class="btn btn-link">🔺</a>
+        <h3 id="score_vote_${vidInfo._id}">${
+    vidInfo.votes.ups - vidInfo.votes.downs
+  }</h3>
+        <a id="votes_downs_${vidInfo._id}" class="btn btn-link">🔻</a>
       </div>
     </div>
     <div class="card-footer d-flex flex-row justify-content-between">
@@ -45,6 +50,38 @@ document.addEventListener('DOMContentLoaded', function () {
     .then((data) => {
       data.forEach((vidInfo) => {
         listOfVidsElm.appendChild(getSingleVidReq(vidInfo));
+
+        const voteUpsElm = document.getElementById(`votes_ups_${vidInfo._id}`);
+        const voteDownsElm = document.getElementById(
+          `votes_downs_${vidInfo._id}`
+        );
+        const scoreVoteElm = document.getElementById(
+          `score_vote_${vidInfo._id}`
+        );
+
+        voteUpsElm.addEventListener('click', (e) => {
+          fetch('http://localhost:7777/video-request/vote', {
+            method: 'PUT',
+            headers: { 'content-Type': 'application/json' },
+            body: JSON.stringify({ id: vidInfo._id, vote_type: 'ups' }),
+          })
+            .then((bolb) => bolb.json())
+            .then((data) => {
+              scoreVoteElm.innerText = data.ups - data.downs;
+            });
+        });
+
+        voteDownsElm.addEventListener('click', (e) => {
+          fetch('http://localhost:7777/video-request/vote', {
+            method: 'PUT',
+            headers: { 'content-Type': 'application/json' },
+            body: JSON.stringify({ id: vidInfo._id, vote_type: 'downs' }),
+          })
+            .then((bolb) => bolb.json())
+            .then((data) => {
+              scoreVoteElm.innerText = data.ups - data.downs;
+            });
+        });
       });
     });
 
@@ -59,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then((bolb) => bolb.json())
       .then((data) => {
-        console.log(data);
+        listOfVidsElm.prepend(getSingleVidReq(data));
       });
   });
 });
