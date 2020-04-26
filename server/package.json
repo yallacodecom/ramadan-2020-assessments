@@ -8,14 +8,15 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "mongoose": "^5.9.9",
-    "multer": "^1.4.2"
+    "multer": "^1.4.2",
+    "nodemon": "^2.0.3"
   },
   "engines": {
     "node": "^10.16.3",
     "npm": "^6.9.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "license": "ISC"
 }
