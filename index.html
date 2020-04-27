@@ -9,10 +9,11 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     />
   </head>
+  <script src="scripts/main.js"></script>
   <body>
     <div class="container my-5">
       <div class="formContainer my-5">
-        <form action="" method="POST">
+        <form onsubmit="return submitVideo()" method="POST">
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -84,7 +85,7 @@
               </div>
             </div>
           </div>
-
+          <p id="message"></p>
           <button type="submit" class="btn btn-success mt-3">
             Send video request
           </button>
