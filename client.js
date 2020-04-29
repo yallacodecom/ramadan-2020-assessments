@@ -4,13 +4,21 @@ var tpl_inst = {
     title: 'topic_title',
     details: 'topic_details',
     expected: 'expected_result',
-    state: 'status',
+    state: 'status, boldItalic',
     name: 'author_name',
     email: 'author_email',
-    dated: 'submit_date',
-    level: 'target_level'
+    dated: 'submit_date, formatDate',
+    level: 'target_level, boldItalic'
 }
 var listOfRequests = document.getElementById('listOfRequests');
+
+function formatDate(dt){
+    date =  new Date(dt)
+    return date.toLocaleDateString()
+}
+function boldItalic(txt){
+    return '<b><i>'+txt+'</i></b>'
+}
 
 /**
  * 
@@ -21,10 +29,20 @@ var listOfRequests = document.getElementById('listOfRequests');
  */
 function render_tpl(tpl, tpl_inst, res) {
     var output = tpl // From /template.js
+    let value = '';
     Object.keys(tpl_inst).forEach((k) => {
+        let filters = tpl_inst[k].split(',');
+        if (filters.length > 1){
+            tpl_inst[k] = tpl_inst[k].trim(filters[0])            
+            value = window[filters[1].trim()](res[filters[0].trim()]);
+            
+        }
+        else{
+            value = res[tpl_inst[k]]
+        }        
         var replace = "{{" + k + "}}";
-        var re = new RegExp(replace, "g");
-        output = output.replace(re, res[tpl_inst[k]])
+        var re = new RegExp(replace, "g");        
+        output = output.replace(re, value)
     })
     return output
 }
