@@ -46,6 +46,7 @@ function extractVote(voteOb){
 function render_tpl(tpl, tpl_inst, res) {
     var output = tpl // From /template.js
     let value = '';
+    output = extractSubTpls(output,tpl_inst,res)
     Object.keys(tpl_inst).forEach((k) => {
         let filters = tpl_inst[k].split(',');
         if (filters.length > 1){
@@ -61,6 +62,49 @@ function render_tpl(tpl, tpl_inst, res) {
         output = output.replace(re, value)
     })
     return output
+}
+
+// sub templates process functions
+
+/**
+ * 
+ * @param {*} tpl 
+ * @param {*} tpl_inst 
+ * @param {*} reGex 
+ * @param {*} data 
+ * @param {*} tplName 
+ * @param {*} v 
+ */
+
+function pNotEmpty(tpl,tpl_inst,reGex,data,tplName,v){
+    if (data[tpl_inst[v]] != ''){
+        //console.log('GGGG',data[tpl_inst[tplName]])
+        return tpl.replace(reGex,window[tplName])        
+    }
+    return tpl.replace(reGex,'')
+
+}
+
+function extractSubTpls(tpl,tpl_inst,data){
+    var output = ''
+    var rep = '\{\{TPL,.*\}\}';
+    var rgx = new RegExp(rep,"g")
+    subTpls = tpl.match(rgx);
+    for (i=0; i< subTpls.length; i++){
+        params = subTpls[i].replace(/\{\{|\}\}/g,'').split(',');
+        console.log(params[3])
+        switch(params[3]){
+            case 'notEmpty':
+                output += pNotEmpty(tpl,tpl_inst,rgx,data,params[1],params[2]);
+                break;
+            default:
+                return tpl.replace(rgx,window[params[1]])
+        } 
+        
+        
+       // console.log(params,data,data[tpl_inst[params[2]]])
+    }
+    return output;
 }
 
 /**
@@ -109,10 +153,12 @@ function votesHandle(className){
     const voteLinks = document.getElementsByClassName(className);    
     for (var el of voteLinks){        
         el.addEventListener('click', (e)=> {
-            e.preventDefault();            
+            e.preventDefault(); 
+            if (!confirm("Are you sure about voting on:\n"+e.target.parentNode.parentNode.querySelector('h3').innerText)) return false;          
             var putData = createVoteBody(e.target)
             url = el.origin+el.pathname
-            putVote(putData,url, e.target)            
+            putVote(putData,url, e.target)  
+            e.target.blur();          
         })
     }    
 }
