@@ -8,16 +8,32 @@ var tpl_inst = {
     name: 'author_name',
     email: 'author_email',
     dated: 'submit_date, formatDate',
-    level: 'target_level, boldItalic'
+    level: 'target_level, boldItalic',
+    voteUpEndPoint: '_id, voteUpLink',
+    voteDownEndPoint: '_id, voteDownLink',
+    count: 'votes, extractVote',
+    id: '_id'
 }
 var listOfRequests = document.getElementById('listOfRequests');
 
 function formatDate(dt){
     date =  new Date(dt)
-    return date.toLocaleDateString()
+    return date.toLocaleDateString() + '@' + date.getUTCHours() + ':' + date.getMinutes()
 }
 function boldItalic(txt){
     return '<b><i>'+txt+'</i></b>'
+}
+
+function voteUpLink(id){
+    return 'http://localhost:7777/video-request/vote?vote_type=ups&id='+id
+}
+
+function voteDownLink(id){
+    return 'http://localhost:7777/video-request/vote?vote_type=downs&id='+id
+}
+
+function extractVote(voteOb){
+    return voteOb.ups - voteOb.downs
 }
 
 /**
@@ -54,13 +70,17 @@ function render_tpl(tpl, tpl_inst, res) {
 function loadVideos() {
     if (readVideos.readyState === XMLHttpRequest.DONE) {
         if (readVideos.status === 200) {
-            var response = JSON.parse(readVideos.responseText);            
-            for (var res of response) {                
+            var response = JSON.parse(readVideos.responseText);   
+            //console.log(response)         
+            for (var res of response) {   
+                        
                 listOfRequests.insertAdjacentHTML('beforeend', render_tpl(tpl, tpl_inst, res));                
             }
         } else {
             alert('There was a problem with loading videos list!');
         }
+        votesHandle('vote')
+        
     }
 }
 
@@ -72,12 +92,61 @@ function checkSaving() {
             formElements = createForm.elements
             for (i = 0; i < formElements.length; i++) {
                 formElements[i].value = '';
-            }            
+            }  
             listOfRequests.insertAdjacentHTML('afterbegin', render_tpl(tpl, tpl_inst, response));
+            votesHandle('vote')
         } else {
             alert('There was a problem with the request.');
         }
     }
+}
+
+/**
+ * 
+ * @param {String} className the class name of voting link
+ */
+function votesHandle(className){
+    const voteLinks = document.getElementsByClassName(className);    
+    for (var el of voteLinks){        
+        el.addEventListener('click', (e)=> {
+            e.preventDefault();            
+            var putData = createVoteBody(e.target)
+            url = el.origin+el.pathname
+            putVote(putData,url, e.target)            
+        })
+    }    
+}
+
+function createVoteBody(el){
+    return el.search.split('?')[1];
+}
+
+function updateVoteCounter(){
+    if (vxhr.readyState === XMLHttpRequest.DONE) {
+        if (vxhr.status === 200) {
+            var response = JSON.parse(vxhr.responseText); 
+                 var votes = response.votes;  
+                 //console.log(votes,response, vxhr) 
+                 var counter = document.getElementById(response._id)       
+                 counter.innerText = (votes.ups - votes.downs)+ ((createVoteBody(vxhr.el).indexOf('=ups') > -1)? 1 : -1);                
+        } else {
+            alert('There was a problem with loading votes!');
+        }      
+        
+    }
+
+}
+
+function putVote(data,url, el){
+
+    vxhr = new XMLHttpRequest();
+    vxhr.el = el;
+    vxhr.onreadystatechange = updateVoteCounter;
+    
+    vxhr.open("PUT", url, true);
+    vxhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    vxhr.send(data);
+
 }
 document.addEventListener('DOMContentLoaded', function () {
     // Getting Videos list.
@@ -101,5 +170,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }        
         xhr.send(postData)
     });
-    //
+    // 
+    // Handle votes
+    // Could not be done here.   
 });
+
+

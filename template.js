@@ -8,9 +8,9 @@ tpl = `<div class="card mb-3">
               </p>
             </div>
             <div class="d-flex flex-column text-center">
-              <a class="btn btn-link">🔺</a>
-              <h3>0</h3>
-              <a class="btn btn-link">🔻</a>
+              <a class="vote btn btn-link" href="{{voteUpEndPoint}}">🔺</a>
+              <h3 id="{{id}}">{{count}}</h3>
+              <a class="vote btn btn-link" href="{{voteDownEndPoint}}">🔻</a>
             </div>
           </div>
           <div class="card-footer d-flex flex-row justify-content-between">

@@ -18,7 +18,7 @@ In this repo you will find some given express server configured to make some bas
 2. Implement the frontend code to make it work with the following functionalities:
    - [*] Submit a video request. (API: POST -> `/video-request`)
    - [*] Show list of requests below the form. (API: GET -> `/video-request`)
-   - [ ] Vote up and down on each request. (API: PUT -> `/video-request/vote`)
+   - [*] Vote up and down on each request. (API: PUT -> `/video-request/vote`)
    - [ ] Sorting options `new first` the default one, and `top voted first`.
    - [ ] Search box to search for vide requests.
    - [ ] Client-side validation for the fields with * as required and for the email field, topic title should be max 100 length.
