@@ -14,6 +14,8 @@ var tpl_inst = {
     count: 'votes, extractVote',
     id: '_id'
 }
+var sort = false;
+var sortDir = 'DES'
 var listOfRequests = document.getElementById('listOfRequests');
 
 function formatDate(dt){
@@ -111,21 +113,56 @@ function extractSubTpls(tpl,tpl_inst,data){
  * After XHR success, it insterts each response item to the listOfRequests videos.
  */
 
-function loadVideos() {
+function loadVideos() {    
     if (readVideos.readyState === XMLHttpRequest.DONE) {
         if (readVideos.status === 200) {
             var response = JSON.parse(readVideos.responseText);   
-            //console.log(response)         
-            for (var res of response) {   
-                        
-                listOfRequests.insertAdjacentHTML('beforeend', render_tpl(tpl, tpl_inst, res));                
+            //console.log(response)
+            var voteWeights = [];         
+            for (var res of response) {
+                
+                arr = [calculateVote(res.votes.ups,res.votes.downs)] 
+                //arr.push(render_tpl(tpl, tpl_inst, res))
+                arr.push(render_tpl(tpl, tpl_inst, res))
+                voteWeights.push(arr)
+                console.log(calculateVote(res.votes.ups,res.votes.downs))        
+               // listOfRequests.insertAdjacentHTML('beforeend', render_tpl(tpl, tpl_inst, res));                
+            }
+            if (sort){
+                if (sortDir == 'DES'){
+                    voteWeights.sort((a,b) => b[0] - a[0])
+                }
+                else{
+                    voteWeights.sort((a,b) => a[0] - b[0])
+                }
+                
+                voteWeights.forEach((i) => listOfRequests.insertAdjacentHTML('beforeend',i[1]))
+            }
+            else{
+                voteWeights.forEach((i) => listOfRequests.insertAdjacentHTML('beforeend',i[1]))
             }
         } else {
             alert('There was a problem with loading videos list!');
         }
+        console.log(voteWeights)
+        console.log(voteWeights.sort((a,b) => b[0] - a[0]))
+
         votesHandle('vote')
         
     }
+}
+
+function sortVids(container,dir,def){
+    if (def){
+        sort = false;       
+    }
+    cont = document.getElementById(container);
+    cont.innerHTML = '';
+    if (!sort && !def){
+        sort = true;
+    }
+    sortDir = dir;
+    loadVideos()
 }
 
 function checkSaving() {
@@ -174,13 +211,17 @@ function updateVoteCounter(){
                  var votes = response.votes;  
                  //console.log(votes,response, vxhr) 
                  var counter = document.getElementById(response._id)       
-                 counter.innerText = (votes.ups - votes.downs)+ ((createVoteBody(vxhr.el).indexOf('=ups') > -1)? 1 : -1);                
+                 counter.innerText = calculateVote(votes.ups, votes.downs)+ ((createVoteBody(vxhr.el).indexOf('=ups') > -1)? 1 : -1);                
         } else {
             alert('There was a problem with loading votes!');
         }      
         
     }
 
+}
+
+function calculateVote(ups,downs){
+    return ups-downs
 }
 
 function putVote(data,url, el){
@@ -199,7 +240,8 @@ document.addEventListener('DOMContentLoaded', function () {
     readVideos = new XMLHttpRequest();
     readVideos.onreadystatechange = loadVideos;
     readVideos.open("GET", 'http://localhost:7777/video-request', true);    
-    readVideos.send();
+    readVideos.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    readVideos.send('top=3');
     //
     // Handling the form, preparing the form's data and submitting the form via XHR
     const createForm = document.getElementById('createForm');

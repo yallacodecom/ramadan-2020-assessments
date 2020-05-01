@@ -8,6 +8,16 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     />
+    <style>
+      a.vote, a.vote:hover, a.vote:active{
+        color:crimson;
+        text-decoration: none;
+        font-size: x-large;
+      }
+      .counter {
+        margin: 0;
+      }
+    </style>
   </head>
   <body>
     <noscript>
@@ -98,11 +108,14 @@
 
           <button type="submit" class="btn btn-success mt-3">
             Send video request
-          </button>
+          </button>          
         </form>
       </div>
       <hr />
       <h1 class="mb-4">List of requested videos</h1>
+      <a href="javascript:sortVids('listOfRequests','DES');">Sort Des</a> 
+      | <a href="javascript:sortVids('listOfRequests','ASC');">Sort Asc</a>
+      | <a href="javascript:sortVids('listOfRequests','ASC',true);">Default</a>
       <div id="listOfRequests">
         <!--
         <div class="card mb-3">
