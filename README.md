@@ -1,3 +1,6 @@
+![img](screenshot1.png)
+
+
 # Ramadan 2020 assessments
 
 > Hi all, this is the repo that holds the assessments that covers ramadan 2020 series on [Semicolon academy](https://www.youtube.com/SemicolonAcademy) youtube channel, no implementations here, only the assessments, you could check later the resolutions on different repos on github as well, or watch the series and build it up together.
@@ -6,14 +9,17 @@ In this repo you will find some given express server configured to make some bas
 
 ---
 
+> ## Notice:
+> Achievements will be assigned with the * symbol in the # 2 list item. 
+
 ## Assessment 1 (Junior level friendly)
 
 1. After cloning the repo and installing the dependancies in the server folder, you should next [setup mongodb](https://docs.mongodb.com/manual/installation/) locally and copy the connection url to the required place in `server/models/mongo.config.js` then run `npm start` in the server folder (btw, cors are enabled so you can run server if you want on a separate port).
 2. Implement the frontend code to make it work with the following functionalities:
-   - [ ] Submit a video request. (API: POST -> `/video-request`)
-   - [ ] Show list of requests below the form. (API: GET -> `/video-request`)
-   - [ ] Vote up and down on each request. (API: PUT -> `/video-request/vote`)
-   - [ ] Sorting options `new first` the default one, and `top voted first`.
+   - [*] Submit a video request. (API: POST -> `/video-request`)
+   - [*] Show list of requests below the form. (API: GET -> `/video-request`)
+   - [*] Vote up and down on each request. (API: PUT -> `/video-request/vote`)
+   - [*] Sorting options `new first` the default one, and `top voted first`.
    - [ ] Search box to search for vide requests.
    - [ ] Client-side validation for the fields with * as required and for the email field, topic title should be max 100 length.
    - [ ] Add signup/login form with email.

@@ -8,11 +8,28 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     />
+    <style>
+      a.vote, a.vote:hover, a.vote:active{
+        color:crimson;
+        text-decoration: none;
+        font-size: x-large;
+      }
+      .counter {
+        margin: 0;
+      }
+    </style>
   </head>
   <body>
-    <div class="container my-5">
+    <noscript>
+      <div style="background-color: rgb(128, 13, 13); color: #fff; width: 100%; text-align: center; position:fixed; top:0; z-index: 500">
+        <h3>
+          JavaScript is not enabled! <a href="https://enable-javascript.com/">Checkout this link</a> to learn more.
+        </h3>
+      </div>
+    </noscript>
+    <div class="container my-5">      
       <div class="formContainer my-5">
-        <form action="" method="POST">
+        <form id="createForm" method="POST">
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -21,6 +38,7 @@
                   class="form-control"
                   name="author_name"
                   placeholder="Write your name here"
+                  required
                 />
               </div>
             </div>
@@ -31,6 +49,7 @@
                   class="form-control"
                   name="author_email"
                   placeholder="Write your email here"
+                  required
                 />
               </div>
             </div>
@@ -44,6 +63,7 @@
                   class="form-control"
                   name="topic_title"
                   placeholder="Write your suggested topic here"
+                  required
                 />
               </div>
             </div>
@@ -70,6 +90,7 @@
                   class="form-control"
                   name="topic_details"
                   placeholder="Write your topic in more details here"
+                  required
                 ></textarea>
               </div>
             </div>
@@ -87,19 +108,23 @@
 
           <button type="submit" class="btn btn-success mt-3">
             Send video request
-          </button>
+          </button>          
         </form>
       </div>
       <hr />
       <h1 class="mb-4">List of requested videos</h1>
+      <a href="javascript:sortVids('listOfRequests','DES');">Sort Des</a> 
+      | <a href="javascript:sortVids('listOfRequests','ASC');">Sort Asc</a>
+      | <a href="javascript:sortVids('listOfRequests','ASC',true);">Default</a>
       <div id="listOfRequests">
+        <!--
         <div class="card mb-3">
           <div class="card-body d-flex justify-content-between flex-row">
             <div class="d-flex flex-column">
-              <h3>Dummy Topic title</h3>
-              <p class="text-muted mb-2">dummy topic details</p>
+              <h3>{{title}}</h3>
+              <p class="text-muted mb-2">{{details}}</p>
               <p class="mb-0 text-muted">
-                <strong>Expected results:</strong> Dummy expected result text
+                <strong>Expected results:</strong> {{expected}}
               </p>
             </div>
             <div class="d-flex flex-column text-center">
@@ -110,20 +135,23 @@
           </div>
           <div class="card-footer d-flex flex-row justify-content-between">
             <div>
-              <span class="text-info">NEW</span>
-              &bullet; added by <strong>Fake Name</strong> on
-              <strong>Sat Apr 11 2020</strong>
+              <span class="text-info">{{state}}</span>
+              &bullet; added by <strong>{{name}}</strong> on
+              <strong>{{dated}}</strong>
             </div>
             <div
               class="d-flex justify-content-center flex-column 408ml-auto mr-2"
             >
               <div class="badge badge-success">
-                Beginners
+                {{level}}
               </div>
             </div>
           </div>
         </div>
+      -->
       </div>
-    </div>
+    </div>  
+    <script src="/template.js"></script>  
+    <script src="/client.js"></script>    
   </body>
 </html>
