@@ -8,11 +8,12 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     />
+    <script defer src="script.js"></script>
   </head>
   <body>
     <div class="container my-5">
       <div class="formContainer my-5">
-        <form action="" method="POST">
+        <form data-video-form-request>
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -92,6 +93,15 @@
       </div>
       <hr />
       <h1 class="mb-4">List of requested videos</h1>
+      <div class="d-flex">
+        <div class="form-group">
+          <label for="sortList">Sort By</label>
+          <select class="form-control" id="sortList">
+            <option data-list-sort-by-new> new first</option>
+            <option data-list-sort-by-votes> top voted first</option>
+          </select>
+        </div>
+      </div>
       <div id="listOfRequests">
         <div class="card mb-3">
           <div class="card-body d-flex justify-content-between flex-row">
