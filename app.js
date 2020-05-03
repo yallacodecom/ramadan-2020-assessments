@@ -17,19 +17,31 @@
     // app state
     let state = {
       videoRequest: [],
+      sortBy: "",
     };
 
-    // on app ready, get video requests
-    getVideoRequests();
+    function setState(reducer = () => state) {
+      const stateChange = reducer(state);
+      console.log("state change ===========", stateChange);
+      Object.assign(state, stateChange);
+      onStateChange(stateChange);
+    }
 
     const requestsListContainerElement = document.querySelector(
       "#listOfRequests"
     );
 
     const requestEmptyState = () => {
-      const template = document.querySelector('template.video-request--empty-state');
+      const template = document.querySelector(
+        "template.video-request--empty-state"
+      );
       return template.innerHTML;
     };
+
+    const filtersElement = document.querySelector(".filters");
+    const sortingHtmlInputs = filtersElement.querySelectorAll(
+      "input[name=sort]"
+    );
 
     const buildVideoRequestHtml = ({
       _id,
@@ -40,6 +52,7 @@
       topic_title,
       expected_result,
       target_level,
+      topic_details,
       update_date,
       video_ref,
       votes,
@@ -49,7 +62,7 @@
           <div class="d-flex flex-column">
             <h3 class="video-request__topic">${topic_title}</h3>
             <p class="text-muted mb-2" class="video-request__topic-details">${
-              topic_title || "N/A"
+              topic_details || "N/A"
             }</p>
             <strong>Expected results:</strong>
             <p class="mb-0 text-muted" class="video-request__expected-result">${
@@ -58,9 +71,7 @@
           </div>
           <div class="d-flex flex-column text-center">
             <button type="button" class="btn btn-link" onClick="app.onRequestVote('ups', '${_id}')">🔺</button>
-            <h3 class="video-request__votes">${
-              votes.ups - votes.downs || 0
-            }</h3>
+            <h3 class="video-request__votes">${votes.voting}</h3>
             <button type="button" class="btn btn-link" onClick="app.onRequestVote('downs', '${_id}')">🔻</button>
           </div>
         </div>
@@ -86,6 +97,14 @@
       </div>
     `;
 
+    // set initial state
+    setState(() => {
+      return {
+        videoRequest: [],
+        sortBy: "submit_date",
+      };
+    });
+
     // compose HTML for video requests
     function composeVideoRequestsListHtml(data = []) {
       return data.length
@@ -101,11 +120,16 @@
     }
 
     // render updated voting
-    function renderRequest(requestData) {
+    function renderRequest(requestData, action) {
+      if (!requestData) return;
+
       const targetElement = document.querySelector(
         `.video-request[data-id='${requestData._id}']`
       );
-      targetElement.outerHTML = buildVideoRequestHtml(requestData);
+
+      action === "DELETE"
+        ? targetElement.remove()
+        : (targetElement.outerHTML = buildVideoRequestHtml(requestData));
     }
 
     // submit single video request
@@ -120,12 +144,23 @@
     }
 
     // get video requests
-    function getVideoRequests() {
-      fetch(api.getVideoRequests)
+    function getVideoRequests(queryParams = {}) {
+      let params;
+
+      if (Object.entries(queryParams).length) {
+        params = toQueryString(queryParams);
+      }
+
+      const requestUrl = params
+        ? `${api.getVideoRequests}${params}`
+        : api.getVideoRequests;
+
+      fetch(requestUrl)
         .then((response) => response.json())
         .then((data) => {
-          // console.log("GET Success:", data);
-          state.videoRequest = data;
+          setState(() => {
+            return { videoRequest: data };
+          });
           renderList();
         })
         .catch((error) => {
@@ -161,6 +196,15 @@
         .catch(onError);
     }
 
+    function toQueryString(object) {
+      return (
+        "?" +
+        Object.keys(object)
+          .map((key) => `${key}=${object[key].toString()}`)
+          .join("&")
+      );
+    }
+
     app.onRequestSubmit = (event) => {
       event.preventDefault();
       const form = event.target;
@@ -178,7 +222,13 @@
     app.onRequestDelete = (event, requestID) => {
       if (!requestID) return;
       event.preventDefault();
-      deleteVideoRequest(requestID, getVideoRequests, console.log);
+      deleteVideoRequest(
+        requestID,
+        (res) => {
+          renderRequest({ _id: requestID }, "DELETE");
+        },
+        console.log
+      );
     };
 
     app.onRequestVote = (VoteType = "ups" || "downs", requestID) => {
@@ -196,5 +246,55 @@
       return new Date(date).toLocaleDateString("en-US", options);
     };
 
+    app.onSearch = ({ target }) => {
+      target.value.length > 2 &&
+        getVideoRequests({ topic_title: target.value });
+    };
+
+    app.sort = (event) => {
+      const { target } = event;
+
+      if (target.type !== "radio") {
+        target.classList.contains("active") && event.preventDefault();
+        return;
+      }
+
+      let { value } = target;
+
+      // call set state only on value change
+      if (
+        (value === "voting" || value === "submit_date") &&
+        state.sortBy !== value
+      ) {
+        setState(() => {
+          return { sortBy: value };
+        });
+      }
+    };
+
+    // on state change
+    function onStateChange(stateChange = { ...state }) {
+      if (stateChange.sortBy) {
+        // toggle active state - render - dom changes
+        sortingHtmlInputs.forEach((node) => {
+          if (node.value === stateChange.sortBy) {
+            node.offsetParent.classList.add("active");
+          } else {
+            node.offsetParent.classList.remove("active");
+          }
+        });
+
+        // sorting API call
+        const query = {
+          sortBy:
+            stateChange.sortBy === "voting"
+              ? stateChange.sortBy
+              : "submit_date",
+        };
+
+        getVideoRequests(query);
+      }
+    }
+    // end
   });
 })();

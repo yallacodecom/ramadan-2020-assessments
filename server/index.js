@@ -14,6 +14,7 @@ if (!Object.keys(mongoose).length) return;
 app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.get('/', (req, res) =>
   res.send('Welcome to semicolon academy APIs, use /video-request to get data')
@@ -26,7 +27,7 @@ app.post('/video-request', upload.none(), async (req, res, next) => {
 });
 
 app.get('/video-request', async (req, res, next) => {
-  const data = await VideoRequestData.getAllVideoRequests();
+  const data = await VideoRequestData.getAllVideoRequests(req.query);
   res.send(data);
   next();
 });

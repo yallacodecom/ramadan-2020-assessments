@@ -108,32 +108,36 @@
           role="toolbar"
           aria-label="Toolbar with button groups"
         >
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-primary active">
-              <input type="radio" name="view" autocomplete="off" checked/>
+          <div
+            class="btn-group btn-group-toggle"
+            data-toggle="buttons"
+            onclick="app.sort(event)"
+          >
+            <label class="btn btn-primary">
+              <input type="radio" name="sort" value="submit_date" />
               Latest
             </label>
             <label class="btn btn-primary">
-              <input type="radio" name="view" autocomplete="off"/>
+              <input type="radio" name="sort" value="voting" />
               Top voted
             </label>
           </div>
 
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
             <label class="btn btn-secondary active">
-              <input type="radio" name="status" autocomplete="off" checked/>
+              <input type="radio" name="status" />
               All
             </label>
             <label class="btn btn-secondary">
-              <input type="radio" name="status" autocomplete="off"/>
+              <input type="radio" name="status" />
               New
             </label>
             <label class="btn btn-secondary">
-              <input type="radio" name="status" autocomplete="off"/>
+              <input type="radio" name="status" autocomplete="off" />
               Planned
             </label>
             <label class="btn btn-secondary">
-              <input type="radio" name="status" autocomplete="off"/>
+              <input type="radio" name="status" autocomplete="off" />
               Done
             </label>
           </div>
@@ -143,6 +147,7 @@
               type="text"
               class="form-control"
               placeholder="Search"
+              oninput="app.onSearch(event)"
             />
           </div>
         </div>

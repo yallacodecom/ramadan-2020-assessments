@@ -6,14 +6,19 @@ module.exports = {
     return newRequest.save();
   },
 
-  getAllVideoRequests: (top) => {
-    return VideoRequest.find({}).sort({ submit_date: "-1" }).limit(top);
-  },
+  getAllVideoRequests: (query) => {
+    const sortBy =
+      query.sortBy && query.sortBy !== "voting"
+        ? { ["votes.voting"]: "-1" }
+        : { submit_date: "-1" };
 
-  searchRequests: (topic) => {
-    return VideoRequest.find({ topic_title: topic })
-      .sort({ addedAt: "-1" })
-      .limit(top);
+    const topicTitle = query.topic_title
+      ? { topic_title: query.topic_title }
+      : undefined;
+
+    return VideoRequest.find(topicTitle)
+      .sort(sortBy)
+      .limit(parseInt(query.size, 10));
   },
 
   getRequestById: (id) => {
