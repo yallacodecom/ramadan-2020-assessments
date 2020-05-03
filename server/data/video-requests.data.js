@@ -1,7 +1,14 @@
-var VideoRequest = require('./../models/video-requests.model');
+const VideoRequest = require('./../models/video-requests.model');
+const User = require('./../models/user.model');
 
 module.exports = {
-  createRequest: (vidRequestData) => {
+  createRequest: async (vidRequestData) => {
+    const authorId = vidRequestData.author_id;
+    if (authorId) {
+      const userObj = await User.findOne({ _id: authorId });
+      vidRequestData.author_name = userObj.author_name;
+      vidRequestData.author_email = userObj.author_email;
+    }
     let newRequest = new VideoRequest(vidRequestData);
     return newRequest.save();
   },
