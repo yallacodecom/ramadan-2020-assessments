@@ -12,7 +12,7 @@
   <body>
     <div class="container my-5">
       <div class="formContainer my-5">
-        <form id="formVideoRequest">
+        <form id="formVideoRequest" novalidate>
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -21,7 +21,12 @@
                   class="form-control"
                   name="author_name"
                   placeholder="Write your name here"
+                  type="text"
+                  required
                 />
+                <p class="invalid-feedback">
+                  this field is required
+                </p>
               </div>
             </div>
             <div class="col-md">
@@ -31,7 +36,12 @@
                   class="form-control"
                   name="author_email"
                   placeholder="Write your email here"
+                  type="email"
+                  required
                 />
+                <p class="invalid-feedback">
+                  this field is required and should be a valid email
+                </p>
               </div>
             </div>
           </div>
@@ -43,8 +53,13 @@
                 <input
                   class="form-control"
                   name="topic_title"
+                  type="text"
                   placeholder="Write your suggested topic here"
+                  required
                 />
+                <p class="invalid-feedback">
+                  this field is required and should not exceed 30 in length
+                </p>
               </div>
             </div>
             <div class="col-md">
@@ -69,8 +84,12 @@
                 <textarea
                   class="form-control"
                   name="topic_details"
+                  required
                   placeholder="Write your topic in more details here"
                 ></textarea>
+                <p class="invalid-feedback">
+                  this field is required
+                </p>
               </div>
             </div>
             <div class="col-md">
