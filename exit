@@ -1,0 +1,49 @@
+[33mcommit c56aedba1d04efcf991398e2b8bcaee5eebb6868[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: MohamedElhefni <elhefnymohamed446@gmail.com>
+Date:   Sun May 3 11:23:11 2020 +0200
+
+    add sort functions
+
+[33mcommit bdb4f676195b0e626256b7516c96d6fa3519a817[m
+Author: MohamedElhefni <elhefnymohamed446@gmail.com>
+Date:   Sun May 3 10:24:36 2020 +0200
+
+    remove moments library
+
+[33mcommit 803212784b047056c7a338c37f98caacfba2a021[m
+Author: MohamedElhefni <elhefnymohamed446@gmail.com>
+Date:   Sun May 3 10:21:57 2020 +0200
+
+    finsih votes task
+
+[33mcommit c635fb24032f9616ba493fce0d7503c51732c6ea[m
+Author: MohamedElhefni <elhefnymohamed446@gmail.com>
+Date:   Sun May 3 09:47:50 2020 +0200
+
+    finish first 2 tasks
+
+[33mcommit bd69719779c8dfbd1071c6e1c7400da644d4b668[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Medhat Dawoud <medhatdawoud@gmail.com>
+Date:   Wed Apr 22 04:24:28 2020 +0200
+
+    Some final touches for the starter
+
+[33mcommit 566d8e6a25f3de76564c9fdae58b0ec7b59e9dc0[m
+Author: Medhat Dawoud <medhatdawoud@gmail.com>
+Date:   Sun Apr 19 23:19:44 2020 +0200
+
+    Enable cors on the server
+    
+    - add some more details to the README
+
+[33mcommit 43e64aad0b0c493cc3d722e31df3920ecb933d26[m
+Author: Medhat Dawoud <medhatdawoud@gmail.com>
+Date:   Sun Apr 19 03:42:29 2020 +0200
+
+    Fix some typos in the README file
+
+[33mcommit c960c069ee188309af50f168a38db5a0f065e579[m
+Author: Medhat Dawoud <medhatdawoud@gmail.com>
+Date:   Sun Apr 19 03:33:56 2020 +0200
+
+    Initial commit: add first assessment
