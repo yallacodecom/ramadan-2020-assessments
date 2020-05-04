@@ -17,7 +17,7 @@ In this repo you will find some given express server configured to make some bas
    - [x] Search box to search for vide requests.
    - [x] Client-side validation for the fields with * as required and for the email field, topic title should be max 100 length.
    - [x] Add signup/login form with email.
-   - [ ] Make votes unique so no one could cheat, using unique user, enhance the voting experience.
+   - [x] Make votes unique so no one could cheat, using unique user, enhance the voting experience.
    - [ ] Make a super user capabilities, delete, add resolution video, and change status. all are only visible to him.
    - [ ] Add style to the super user capabilities and make filter by request statuses (`NEW`, `PLANNED`, `DONE`).
 3. Feel free to enhance the APIs to suit your needs if needed.
