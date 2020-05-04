@@ -2,9 +2,23 @@ const videoForm = document.querySelector("[data-video-form-request]");
 const videoRequestsContainer = document.getElementById("listOfRequests");
 const sortByVotesBtn = document.querySelector("[data-list-sort-by-votes]");
 const sortByNewBtn = document.querySelector("[data-list-sort-by-new]");
+const searchForVideo = document.querySelector("[data-search-for-video]");
+
+//  search section
+
+searchForVideo.addEventListener("keyup", () => {
+  let videoTitleValue = searchForVideo.value.toUpperCase();
+  for (let video of videoRequestsContainer.children) {
+    let videoTitle = video.querySelector("h3").textContent;
+    if (videoTitle.toUpperCase().indexOf(videoTitleValue) > -1) {
+      video.style.display = "";
+    } else {
+      video.style.display = "none";
+    }
+  }
+});
 
 // sort btn section
-
 sortByVotesBtn.addEventListener("click", () => {
   render("sortByVotes");
 });
