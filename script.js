@@ -3,28 +3,27 @@ const videoRequestsContainer = document.getElementById("listOfRequests");
 const sortByVotesBtn = document.querySelector("[data-list-sort-by-votes]");
 const sortByNewBtn = document.querySelector("[data-list-sort-by-new]");
 const searchForVideo = document.querySelector("[data-search-for-video]");
-
+let sortBy = "newFirst";
+let searchTerm = "";
 //  search section
 
-searchForVideo.addEventListener("keyup", () => {
-  let videoTitleValue = searchForVideo.value.toUpperCase();
-  for (let video of videoRequestsContainer.children) {
-    let videoTitle = video.querySelector("h3").textContent;
-    if (videoTitle.toUpperCase().indexOf(videoTitleValue) > -1) {
-      video.style.display = "";
-    } else {
-      video.style.display = "none";
-    }
-  }
-});
+searchForVideo.addEventListener(
+  "input",
+  debounce(() => {
+    searchTerm = searchForVideo.value;
+    render(sortBy, searchTerm);
+  })
+);
 
 // sort btn section
 sortByVotesBtn.addEventListener("click", () => {
-  render("sortByVotes");
+  sortBy = "topVotedFirst";
+  render(sortBy, searchTerm);
 });
 
 sortByNewBtn.addEventListener("click", () => {
-  render();
+  sortBy = "newFirst";
+  render(sortBy, searchTerm);
 });
 
 // post video request to /video-request
@@ -44,26 +43,22 @@ videoForm.addEventListener("submit", (e) => {
 
 // get videos from /video-request
 
-function render(type = "") {
+function render(sortBy = "newFirst", searchTerm = "") {
   clearElement(videoRequestsContainer);
 
   let videos;
-  fetch("http://localhost:7777/video-request")
+  fetch(
+    `http://localhost:7777/video-request?sortBy=${sortBy}&searchTerm=${searchTerm}`
+  )
     .then((response) => response.json())
     .then((data) => (videos = data))
-    .then(() => {
-      if (type == "sortByVotes") {
-        sortByVotes(videos);
-      } else {
-        renderVideoList(videos);
-      }
-    });
+    .then(() => renderVideoList(videos));
 }
 
 function renderVideoList(videos) {
   // console.log(videos);
   videos.forEach((video) => {
-    let videoType = video[1] ? video[0] : video;
+    let videoType = video[1] || video[1] == 0 ? video[0] : video;
     let {
       _id,
       author_name,
@@ -160,9 +155,18 @@ function resetForm() {
 }
 
 function clearElement(element) {
-  while (element.firstChild) {
-    element.removeChild(element.firstChild);
-  }
+  // while (element.firstChild) {
+  //   element.removeChild(element.firstChild);
+  // }
+  element.innerHTML = "";
+}
+
+function debounce(fn) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), 500);
+  };
 }
 
 render();
