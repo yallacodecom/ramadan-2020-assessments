@@ -20,7 +20,7 @@ In this repo you will find some given express server configured to make some bas
    - [x] Add signup/login form with email.
    - [x] Make votes unique so no one could cheat, using unique user, enhance the voting experience.
    - [x] Make a super user capabilities, delete, add resolution video, and change status. all are only visible to him.
-   - [ ] Add style to the super user capabilities and make filter by request statuses (`NEW`, `PLANNED`, `DONE`).
+   - [x] Add style to the super user capabilities and make filter by request statuses (`NEW`, `PLANNED`, `DONE`).
 4. Feel free to enhance the APIs to suit your needs if needed.
 5. You are supposed after all to make the requests work using AJAX to make the project looks like a SPA.
 6. Check all payloads in the schema at `server/models/video-requests.model.js` and check the endpoints at `server/index.js`
