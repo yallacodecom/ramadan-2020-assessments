@@ -1,7 +1,7 @@
 import { debounce } from './debounce.js';
 import { renderSingleVidReq } from './renderSingleVidReq.js';
 import { checkValidity } from './checkValidity.js';
-import API from './api.js';
+import dataSerivce from './dataService.js';
 
 const SUPER_USER_ID = '19900411';
 export const state = {
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     appContentElm.classList.remove('d-none');
   }
 
-  API.loadAllVidReqs();
+  dataSerivce.loadAllVidReqs();
 
   filterByElms.forEach((elm) => {
     elm.addEventListener('click', function (e) {
@@ -39,7 +39,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       filterByElms.forEach((option) => option.classList.remove('active'));
       this.classList.add('active');
-      API.loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
+      dataSerivce.loadAllVidReqs(
+        state.sortBy,
+        state.searchTerm,
+        state.filterBy
+      );
     });
   });
 
@@ -49,7 +53,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       state.sortBy = this.querySelector('input').value;
 
-      API.loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
+      dataSerivce.loadAllVidReqs(
+        state.sortBy,
+        state.searchTerm,
+        state.filterBy
+      );
 
       this.classList.add('active');
 
@@ -66,7 +74,11 @@ document.addEventListener('DOMContentLoaded', function () {
     debounce((e) => {
       state.searchTerm = e.target.value;
 
-      API.loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
+      dataSerivce.loadAllVidReqs(
+        state.sortBy,
+        state.searchTerm,
+        state.filterBy
+      );
     }, 300)
   );
 
@@ -81,13 +93,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!isValid) return;
 
-    fetch('http://localhost:7777/video-request', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((bolb) => bolb.json())
-      .then((data) => {
-        renderSingleVidReq(data, state, true);
-      });
+    dataSerivce.addVideoReq(formData).then((data) => {
+      renderSingleVidReq(data, state, true);
+    });
   });
 });
