@@ -11,8 +11,8 @@
   </head>
   <body>
     <div class="container my-5">
-      <div class="formContainer my-5">
-        <form action="" method="POST">
+      <div class="form-login col-md-4 offset-md-4 pt-5">
+        <form action="http://localhost:7777/users/login" method="POST">
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -21,109 +21,141 @@
                   class="form-control"
                   name="author_name"
                   placeholder="Write your name here"
+                  type="text"
+                  required
                 />
+                <p class="invalid-feedback">
+                  this field is required
+                </p>
               </div>
-            </div>
-            <div class="col-md">
               <div class="form-group">
                 <label for="author_email">Your email *</label>
                 <input
                   class="form-control"
                   name="author_email"
                   placeholder="Write your email here"
+                  type="email"
+                  required
                 />
+                <p class="invalid-feedback">
+                  this field is required and should be a valid email
+                </p>
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary btn-block">login</button>
               </div>
             </div>
           </div>
-          <hr />
-          <div class="row">
-            <div class="col-md">
-              <div class="form-group">
-                <label for="topic_title">Topic *</label>
-                <input
-                  class="form-control"
-                  name="topic_title"
-                  placeholder="Write your suggested topic here"
-                />
-              </div>
-            </div>
-            <div class="col-md">
-              <div class="form-group">
-                <label for="target_level">Target level</label>
-                <select
-                  class="form-control"
-                  name="target_level"
-                  placeholder="Write your name here"
-                >
-                  <option value="begineer">Beginner</option>
-                  <option value="medium">Medium</option>
-                  <option value="advanced">Advanced</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md">
-              <div class="form-group">
-                <label for="topic_details">More details *</label>
-                <textarea
-                  class="form-control"
-                  name="topic_details"
-                  placeholder="Write your topic in more details here"
-                ></textarea>
-              </div>
-            </div>
-            <div class="col-md">
-              <div class="form-group">
-                <label for="expected_result">Expected results</label>
-                <textarea
-                  class="form-control"
-                  name="expected_result"
-                  placeholder="Write what do you expect after watching this video"
-                ></textarea>
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-success mt-3">
-            Send video request
-          </button>
         </form>
       </div>
-      <hr />
-      <h1 class="mb-4">List of requested videos</h1>
-      <div id="listOfRequests">
-        <div class="card mb-3">
-          <div class="card-body d-flex justify-content-between flex-row">
-            <div class="d-flex flex-column">
-              <h3>Dummy Topic title</h3>
-              <p class="text-muted mb-2">dummy topic details</p>
-              <p class="mb-0 text-muted">
-                <strong>Expected results:</strong> Dummy expected result text
-              </p>
-            </div>
-            <div class="d-flex flex-column text-center">
-              <a class="btn btn-link">🔺</a>
-              <h3>0</h3>
-              <a class="btn btn-link">🔻</a>
-            </div>
-          </div>
-          <div class="card-footer d-flex flex-row justify-content-between">
-            <div>
-              <span class="text-info">NEW</span>
-              &bullet; added by <strong>Fake Name</strong> on
-              <strong>Sat Apr 11 2020</strong>
-            </div>
-            <div
-              class="d-flex justify-content-center flex-column 408ml-auto mr-2"
-            >
-              <div class="badge badge-success">
-                Beginners
+      <div class="app-content d-none">
+        <div class="normal-user-content">
+          <div class="my-5">
+            <form id="formVideoRequest" novalidate>
+              <div class="row">
+                <div class="col-md">
+                  <div class="form-group">
+                    <label for="topic_title">Topic *</label>
+                    <input
+                      class="form-control"
+                      name="topic_title"
+                      type="text"
+                      placeholder="Write your suggested topic here"
+                      required
+                    />
+                    <p class="invalid-feedback">
+                      this field is required and should not exceed 30 in length
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md">
+                  <div class="form-group">
+                    <label for="target_level">Target level</label>
+                    <select
+                      class="form-control"
+                      name="target_level"
+                      placeholder="Write your name here"
+                    >
+                      <option value="begineer">Beginner</option>
+                      <option value="medium">Medium</option>
+                      <option value="advanced">Advanced</option>
+                    </select>
+                  </div>
+                </div>
               </div>
+              <div class="row">
+                <div class="col-md">
+                  <div class="form-group">
+                    <label for="topic_details">More details *</label>
+                    <textarea
+                      class="form-control"
+                      name="topic_details"
+                      required
+                      placeholder="Write your topic in more details here"
+                    ></textarea>
+                    <p class="invalid-feedback">
+                      this field is required
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md">
+                  <div class="form-group">
+                    <label for="expected_result">Expected results</label>
+                    <textarea
+                      class="form-control"
+                      name="expected_result"
+                      placeholder="Write what do you expect after watching this video"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success mt-3">
+                Send video request
+              </button>
+            </form>
+          </div>
+          <hr />
+          <h1 class="mb-4">List of requested videos</h1>
+          <div class="d-flex justify-content-between mb-4">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-primary active" id="sort_by_new">
+                <input type="radio" name="options" value="newFirst" /> New first
+              </label>
+              <label class="btn btn-primary" id="sort_by_top">
+                <input type="radio" name="options" value="topVotedFirst" />
+                Top voted first
+              </label>
+            </div>
+
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-primary active" id="filter_by_all">
+                <input type="radio" value="all" name="options" checked /> All
+              </label>
+              <label class="btn btn-primary" id="filter_by_new">
+                <input type="radio" value="new" name="options" /> New
+              </label>
+              <label class="btn btn-primary" id="filter_by_planned">
+                <input type="radio" value="planned" name="options" /> Planned
+              </label>
+              <label class="btn btn-primary" id="filter_by_done">
+                <input type="radio" value="done" name="options" /> Done
+              </label>
+            </div>
+
+            <div>
+              <input
+                type="search"
+                class="form-control"
+                id="search_box"
+                placeholder="Type your search term"
+              />
             </div>
           </div>
         </div>
+        <div id="listOfRequests"></div>
       </div>
     </div>
+    <script type="module" src="/client.js"></script>
   </body>
 </html>
