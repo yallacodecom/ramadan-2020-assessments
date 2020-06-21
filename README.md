@@ -26,3 +26,5 @@ In this repo you will find some given express server configured to make some bas
 6. Check all payloads in the schema at `server/models/video-requests.model.js` and check the endpoints at `server/index.js`
 7. You are **obligated** to write only **pure JavaScript** code without using any external utility or libraries.
 8. You should not write any css code or styling effort as the provided `index.html` file has almost all what you need, but you can use the bootstrap provided classes.
+
+*You can find the final version of the solution on the [final branch](https://github.com/semicolon-academy/ramadan-2020-assessments/tree/final)*
