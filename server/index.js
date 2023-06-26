@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+dotenv.config({ path:'config.env' })
 const port = process.env.PORT || 7777;
 const VideoRequestData = require('./data/video-requests.data');
 const UserData = require('./data/user.data');
