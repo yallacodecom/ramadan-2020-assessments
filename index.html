@@ -12,7 +12,7 @@
   <body>
     <div class="container my-5">
       <div class="formContainer my-5">
-        <form action="" method="POST">
+        <form id="videoReqForm">
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -125,5 +125,32 @@
         </div>
       </div>
     </div>
+<script>
+  // Use DOMContentLoaded event to make sure that the DOM is loaded before running the script
+  document.addEventListener('DOMContentLoaded', function() {
+    const videoReqForm = document.getElementById('videoReqForm');
+    videoReqForm.addEventListener('submit', (e)=> {
+      e.preventDefault();
+
+      // Get the data from the form to one variable
+      const formData = new FormData(videoReqForm)
+      
+      // Send the data using post method using fetch api
+      fetch('http://localhost:7777/video-request', {
+        method: 'POST',
+        body: formData
+      }).then((res)=> {
+        console.log(res);
+      }).catch((err)=> {
+        console.log(err);
+      })
+    })
+
+})
+
+
+
+</script>
+
   </body>
 </html>
