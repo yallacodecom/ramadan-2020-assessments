@@ -9,7 +9,10 @@ function getSingleVidReq(vidInfo) {
     <h3>${vidInfo.topic_title}</h3>
     <p class="text-muted mb-2">${vidInfo.topic_details}</p>
     <p class="mb-0 text-muted">
-      <strong>Expected results:</strong> ${vidInfo.expected_result}
+      ${
+        vidInfo.expected_result &&
+        `<strong>Expected results:</strong> ${vidInfo.expected_result}`
+      }
     </p>
   </div>
   <div class="d-flex flex-column text-center">
@@ -62,8 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
       method: 'POST',
       body: formData,
     })
-      .then((res) => {
-        console.log(res);
+      .then((res) => res.json())
+
+      .then((data) => {
+        // use prepend to add the new request to the top of the list
+        listOfVidsElm.prepend(getSingleVidReq(data));
       })
       .catch((err) => {
         console.log(err);
