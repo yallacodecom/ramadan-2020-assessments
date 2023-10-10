@@ -1,5 +1,6 @@
 const listOfVidsElm = document.getElementById('listOfRequests');
-
+let sortBy = 'newFirst';
+let searchTerm = '';
 // Creating Video card for a single request
 function renderSingleVidReq(vidInfo, isPrepend = false) {
   // Template for List of Video Requests
@@ -60,11 +61,14 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
   });
 }
 
-function loadAllVidReqs(sortBy = 'newFirst') {
+function loadAllVidReqs(sortBy, searchTerm = '') {
   // Fetch all video requests
-  fetch(`http://localhost:7777/video-request?sortBy=${sortBy}`)
+  fetch(
+    `http://localhost:7777/video-request?sortBy=${sortBy}&searchTerm=${searchTerm}`
+  )
     .then((blob) => blob.json())
     .then((data) => {
+      console.log('🚀 ~ file: client.js:70 ~ .then ~ data:', data);
       listOfVidsElm.innerHTML = '';
       data.forEach((vid) => {
         renderSingleVidReq(vid);
@@ -94,18 +98,40 @@ function postVote(id, vote_type) {
       console.log(err);
     });
 }
+// Implement Debounce function
+function debounce(func, delay) {
+  let timeout;
+  // if the function is called again before the delay time, the previous timeout will be cleared and a new timeout will be set
+  return function (...args) {
+    // if there is a timeout, clear it and set a new one
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
 // Use DOMContentLoaded event to make sure that the DOM is loaded before running the script
 document.addEventListener('DOMContentLoaded', function () {
   const videoReqForm = document.getElementById('videoReqForm');
   const sortBySelectElms = document.querySelectorAll(`[id*=sort_by_]`);
+  const searchInputElm = document.getElementById('search-box');
+
+  // send the search value to the server for loading the result
+  searchInputElm.addEventListener(
+    'input',
+    debounce((e) => {
+      searchTerm = e.target.value;
+      loadAllVidReqs(sortBy, searchTerm);
+    }, 300)
+  );
+
   loadAllVidReqs();
 
   sortBySelectElms.forEach((elm) => {
     elm.addEventListener('click', function (e) {
       e.preventDefault();
 
-      const sortBy = this.querySelector('input');
-      loadAllVidReqs(sortBy.value);
+      sortBy = this.querySelector('input').value;
+      loadAllVidReqs(sortBy, searchTerm);
       // Active the current Sort btn
       sortBySelectElms.forEach((e) => e.classList.remove('active'));
       this.classList.add('active');
