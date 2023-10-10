@@ -1,5 +1,7 @@
+const listOfVidsElm = document.getElementById('listOfRequests');
+
 // Creating Video card for a single request
-function getSingleVidReq(vidInfo) {
+function renderSingleVidReq(vidInfo, isPrepend = false) {
   // Template for List of Video Requests
   const vidReqContainerElm = document.createElement('div');
   vidReqContainerElm.className = 'card mb-3';
@@ -39,56 +41,34 @@ function getSingleVidReq(vidInfo) {
       </div>
       </div>
       `;
-  return vidReqContainerElm;
+
+  // Prepend the new request to the top of the list
+  if (isPrepend) {
+    listOfVidsElm.prepend(vidReqContainerElm);
+  } else {
+    listOfVidsElm.appendChild(vidReqContainerElm);
+  }
+  // Get Votes up and down buttons
+  const votesUpBtnElm = document.getElementById(`votes_ups_${vidInfo._id}`);
+  const votesDownBtnElm = document.getElementById(`votes_downs_${vidInfo._id}`);
+  // Add event listener to the votes up and down buttons
+  votesUpBtnElm.addEventListener('click', () => {
+    postVote(vidInfo._id, 'ups');
+  });
+  votesDownBtnElm.addEventListener('click', () => {
+    postVote(vidInfo._id, 'downs');
+  });
 }
 // Use DOMContentLoaded event to make sure that the DOM is loaded before running the script
 document.addEventListener('DOMContentLoaded', function () {
   const videoReqForm = document.getElementById('videoReqForm');
-  const listOfVidsElm = document.getElementById('listOfRequests');
 
   // Get the list of requests from the server
   fetch('http://localhost:7777/video-request')
     .then((blob) => blob.json())
     .then((data) => {
       data.forEach((vidInfo) => {
-        listOfVidsElm.appendChild(getSingleVidReq(vidInfo));
-        // Get Votes up and down buttons
-        const votesUpBtnElm = document.getElementById(
-          `votes_ups_${vidInfo._id}`
-        );
-        const votesDownBtnElm = document.getElementById(
-          `votes_downs_${vidInfo._id}`
-        );
-        // Get the score of votes
-        const scoreVotesElm = document.getElementById(
-          `score_votes_${vidInfo._id}`
-        );
-        // Add event listener to the votes up and down buttons
-        votesUpBtnElm.addEventListener('click', () => {
-          const id = vidInfo._id;
-          postVote(id, 'ups');
-        });
-        votesDownBtnElm.addEventListener('click', () => {
-          const id = vidInfo._id;
-          postVote(id, 'downs');
-        });
-        // postVote for post vote to the server
-        function postVote(id, vote_type) {
-          fetch('http://localhost:7777/video-request/vote', {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id, vote_type }),
-          })
-            .then((blob) => blob.json())
-            .then((data) => {
-              scoreVotesElm.innerText = data.ups - data.downs;
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
+        renderSingleVidReq(vidInfo);
       });
     });
 
@@ -105,11 +85,30 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then((res) => res.json())
       .then((data) => {
-        // add the new request to the top of the list using Prepend
-        listOfVidsElm.prepend(getSingleVidReq(data));
+        renderSingleVidReq(data, true);
       })
       .catch((err) => {
         console.log(err);
       });
   });
 });
+
+// postVote for post vote to the server
+function postVote(id, vote_type) {
+  // Get the score of votes
+  const scoreVotesElm = document.getElementById(`score_votes_${id}`);
+  fetch('http://localhost:7777/video-request/vote', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id, vote_type }),
+  })
+    .then((blob) => blob.json())
+    .then((data) => {
+      scoreVotesElm.innerText = data.ups - data.downs;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
