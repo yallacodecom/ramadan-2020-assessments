@@ -27,8 +27,23 @@ app.post('/video-request', upload.none(), async (req, res, next) => {
 });
 
 app.get('/video-request', async (req, res, next) => {
-  console.log('🚀 ~ file: index.js:34 ~ app.get ~ req:', req);
-  const data = await VideoRequestData.getAllVideoRequests();
+  // Using Query for sorting
+  const { sortBy } = req.query;
+  let data = await VideoRequestData.getAllVideoRequests();
+  // Sort data based on votes = topVotedFirst
+  if (sortBy === 'topVotedFirst') {
+    data = data.sort((prev, next) => {
+      if (
+        prev.votes.ups - prev.votes.downs >
+        next.votes.ups - next.votes.downs
+      ) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+  }
+
   res.send(data);
   next();
 });

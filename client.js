@@ -59,18 +59,58 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
     postVote(vidInfo._id, 'downs');
   });
 }
+
+function loadAllVidReqs(sortBy = 'newFirst') {
+  // Fetch all video requests
+  fetch(`http://localhost:7777/video-request?sortBy=${sortBy}`)
+    .then((blob) => blob.json())
+    .then((data) => {
+      listOfVidsElm.innerHTML = '';
+      data.forEach((vid) => {
+        renderSingleVidReq(vid);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+// postVote for post vote to the server
+function postVote(id, vote_type) {
+  // Get the score of votes
+  const scoreVotesElm = document.getElementById(`score_votes_${id}`);
+  fetch('http://localhost:7777/video-request/vote', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id, vote_type }),
+  })
+    .then((blob) => blob.json())
+    .then((data) => {
+      scoreVotesElm.innerText = data.ups - data.downs;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 // Use DOMContentLoaded event to make sure that the DOM is loaded before running the script
 document.addEventListener('DOMContentLoaded', function () {
   const videoReqForm = document.getElementById('videoReqForm');
+  const sortBySelectElms = document.querySelectorAll(`[id*=sort_by_]`);
+  loadAllVidReqs();
 
-  // Get the list of requests from the server
-  fetch('http://localhost:7777/video-request')
-    .then((blob) => blob.json())
-    .then((data) => {
-      data.forEach((vidInfo) => {
-        renderSingleVidReq(vidInfo);
-      });
+  sortBySelectElms.forEach((elm) => {
+    elm.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const sortBy = this.querySelector('input');
+      loadAllVidReqs(sortBy.value);
+      // Active the current Sort btn
+      sortBySelectElms.forEach((e) => e.classList.remove('active'));
+      this.classList.add('active');
     });
+  });
 
   videoReqForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -92,23 +132,3 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
-
-// postVote for post vote to the server
-function postVote(id, vote_type) {
-  // Get the score of votes
-  const scoreVotesElm = document.getElementById(`score_votes_${id}`);
-  fetch('http://localhost:7777/video-request/vote', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id, vote_type }),
-  })
-    .then((blob) => blob.json())
-    .then((data) => {
-      scoreVotesElm.innerText = data.ups - data.downs;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
