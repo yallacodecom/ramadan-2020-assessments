@@ -9,10 +9,11 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     />
   </head>
+
   <body>
     <div class="container my-5">
       <div class="formContainer my-5">
-        <form id="videoReqForm">
+        <form id="videoReqForm" class="needs-validation" novalidate>
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -21,9 +22,13 @@
                   class="form-control"
                   name="author_name"
                   placeholder="Write your name here"
+                  type="text"
+                  required
                 />
+                <div class="invalid-feedback">Please provide username.</div>
               </div>
             </div>
+
             <div class="col-md">
               <div class="form-group">
                 <label for="author_email">Your email *</label>
@@ -31,11 +36,15 @@
                   class="form-control"
                   name="author_email"
                   placeholder="Write your email here"
+                  type="email"
+                  required
                 />
+                <div class="invalid-feedback">
+                  Please provide a valid email.
+                </div>
               </div>
             </div>
           </div>
-          <hr />
           <div class="row">
             <div class="col-md">
               <div class="form-group">
@@ -43,8 +52,15 @@
                 <input
                   class="form-control"
                   name="topic_title"
+                  type="text"
+                  maxlength="30"
                   placeholder="Write your suggested topic here"
+                  required
                 />
+                <div class="invalid-feedback">
+                  Please provide a Topic title, and should be less than 30
+                  characters.
+                </div>
               </div>
             </div>
             <div class="col-md">
@@ -70,7 +86,9 @@
                   class="form-control"
                   name="topic_details"
                   placeholder="Write your topic in more details here"
+                  required
                 ></textarea>
+                <div class="invalid-feedback">Please provide some datails.</div>
               </div>
             </div>
             <div class="col-md">
@@ -94,18 +112,23 @@
       <h1 class="mb-4">List of requested videos</h1>
       <!-- Sorting -->
       <div class="d-flex justify-content-between mb-4">
-        <div class="btn-group btn-group-toggle" data-toggle="buttons" >
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
           <label class="btn btn-primary active mr-1" id="sort_by_new">
-            <input type="radio" name="options"  value="newFirst"/> New First
+            <input type="radio" name="options" value="newFirst" /> New First
           </label>
           <label class="btn btn-primary" id="sort_by_top">
-            <input type="radio" name="options" value="topVotedFirst"/> Top Voted
+            <input type="radio" name="options" value="topVotedFirst" /> Top
+            Voted
           </label>
         </div>
-<div>
-  <input type="search" id="search-box" class="form-control" placeholder="Search here" >
-</div>
-
+        <div>
+          <input
+            type="search"
+            id="search-box"
+            class="form-control"
+            placeholder="Search here"
+          />
+        </div>
       </div>
 
       <div id="listOfRequests">

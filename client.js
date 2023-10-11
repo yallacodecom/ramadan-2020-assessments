@@ -68,7 +68,6 @@ function loadAllVidReqs(sortBy, searchTerm = '') {
   )
     .then((blob) => blob.json())
     .then((data) => {
-      console.log('🚀 ~ file: client.js:70 ~ .then ~ data:', data);
       listOfVidsElm.innerHTML = '';
       data.forEach((vid) => {
         renderSingleVidReq(vid);
@@ -108,6 +107,41 @@ function debounce(func, delay) {
     timeout = setTimeout(() => func.apply(this, args), delay);
   };
 }
+function checkFormValidity(formData) {
+  const name = formData.get('author_name');
+  const email = formData.get('author_email');
+  const topicTitle = formData.get('topic_title');
+  const topicDetails = formData.get('topic_details');
+
+  if (!name) {
+    document.querySelector('[name=author_name]').classList.add('is-invalid');
+  }
+  // use powerfull regex to check the email validation
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (!email || !emailPattern.test(email)) {
+    document.querySelector('[name=author_email]').classList.add('is-invalid');
+  }
+  if (!topicTitle) {
+    document.querySelector('[name=topic_title]').classList.add('is-invalid');
+  }
+  if (!topicDetails) {
+    document.querySelector('[name=topic_details]').classList.add('is-invalid');
+  }
+
+  const allInvalidElms = document
+    .getElementById('videoReqForm')
+    .querySelectorAll('.is-invalid');
+  if (allInvalidElms.length) {
+    // Check on every input change
+    allInvalidElms.forEach((elm) => {
+      elm.addEventListener('input', function () {
+        this.classList.remove('is-invalid');
+      });
+    });
+    return false;
+  }
+  return true;
+}
 
 // Use DOMContentLoaded event to make sure that the DOM is loaded before running the script
 document.addEventListener('DOMContentLoaded', function () {
@@ -143,6 +177,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Get the data from the form to one variable
     const formData = new FormData(videoReqForm);
+
+    // Check validation of the form
+    const isValid = checkFormValidity(formData);
+
+    if (!isValid) return;
 
     // Send the data using post method using fetch api
     fetch('http://localhost:7777/video-request', {
