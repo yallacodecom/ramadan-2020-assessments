@@ -1,62 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Semicolon | video request</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    />
-  </head>
 
-  <body>
-    <div class="container my-5">
-      <div class="formContainer my-5">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semicolon | video request</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+
+<body>
+  <div class="container my-5">
+    <div class="login-form col-md-6 offset-md-3 pt-5">
+      <form action="http://localhost:7777/users/login" method="POST">
+        <div class="row">
+          <div class="col-md">
+            <div class="form-group ">
+              <label for="author_name">Your name *</label>
+              <input class="form-control" name="author_name" placeholder="Write your name here" type="text" required />
+              <div class="invalid-feedback">Please provide username.</div>
+            </div>
+            <div class="form-group">
+
+              <label for="author_email">Your email *</label>
+              <input class="form-control" name="author_email" placeholder="Write your email here" type="email"
+                required />
+              <div class="invalid-feedback">Please provide a valid email.</div>
+            </div>
+            <div class="form-group">
+
+              <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="app-content d-none">
+      <div class="my-5">
         <form id="videoReqForm" class="needs-validation" novalidate>
           <div class="row">
             <div class="col-md">
               <div class="form-group">
-                <label for="author_name">Your name *</label>
-                <input
-                  class="form-control"
-                  name="author_name"
-                  placeholder="Write your name here"
-                  type="text"
-                  required
-                />
-                <div class="invalid-feedback">Please provide username.</div>
-              </div>
-            </div>
-
-            <div class="col-md">
-              <div class="form-group">
-                <label for="author_email">Your email *</label>
-                <input
-                  class="form-control"
-                  name="author_email"
-                  placeholder="Write your email here"
-                  type="email"
-                  required
-                />
-                <div class="invalid-feedback">
-                  Please provide a valid email.
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md">
-              <div class="form-group">
                 <label for="topic_title">Topic *</label>
-                <input
-                  class="form-control"
-                  name="topic_title"
-                  type="text"
-                  maxlength="30"
-                  placeholder="Write your suggested topic here"
-                  required
-                />
+                <input class="form-control" name="topic_title" type="text" maxlength="30"
+                  placeholder="Write your suggested topic here" required />
                 <div class="invalid-feedback">
                   Please provide a Topic title, and should be less than 30
                   characters.
@@ -66,11 +52,7 @@
             <div class="col-md">
               <div class="form-group">
                 <label for="target_level">Target level</label>
-                <select
-                  class="form-control"
-                  name="target_level"
-                  placeholder="Write your name here"
-                >
+                <select class="form-control" name="target_level" placeholder="Write your name here">
                   <option value="begineer">Beginner</option>
                   <option value="medium">Medium</option>
                   <option value="advanced">Advanced</option>
@@ -82,23 +64,16 @@
             <div class="col-md">
               <div class="form-group">
                 <label for="topic_details">More details *</label>
-                <textarea
-                  class="form-control"
-                  name="topic_details"
-                  placeholder="Write your topic in more details here"
-                  required
-                ></textarea>
+                <textarea class="form-control" name="topic_details" placeholder="Write your topic in more details here"
+                  required></textarea>
                 <div class="invalid-feedback">Please provide some datails.</div>
               </div>
             </div>
             <div class="col-md">
               <div class="form-group">
                 <label for="expected_result">Expected results</label>
-                <textarea
-                  class="form-control"
-                  name="expected_result"
-                  placeholder="Write what do you expect after watching this video"
-                ></textarea>
+                <textarea class="form-control" name="expected_result"
+                  placeholder="Write what do you expect after watching this video"></textarea>
               </div>
             </div>
           </div>
@@ -122,12 +97,7 @@
           </label>
         </div>
         <div>
-          <input
-            type="search"
-            id="search-box"
-            class="form-control"
-            placeholder="Search here"
-          />
+          <input type="search" id="search-box" class="form-control" placeholder="Search here" />
         </div>
       </div>
 
@@ -136,5 +106,6 @@
       </div>
     </div>
     <script src="/client.js"></script>
-  </body>
+</body>
+
 </html>

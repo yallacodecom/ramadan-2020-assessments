@@ -1,6 +1,10 @@
 const listOfVidsElm = document.getElementById('listOfRequests');
-let sortBy = 'newFirst';
-let searchTerm = '';
+
+const state = {
+  sortBy: 'newFirst',
+  searchTerm: '',
+  userId: '',
+};
 // Creating Video card for a single request
 function renderSingleVidReq(vidInfo, isPrepend = false) {
   // Template for List of Video Requests
@@ -108,19 +112,9 @@ function debounce(func, delay) {
   };
 }
 function checkFormValidity(formData) {
-  const name = formData.get('author_name');
-  const email = formData.get('author_email');
   const topicTitle = formData.get('topic_title');
   const topicDetails = formData.get('topic_details');
 
-  if (!name) {
-    document.querySelector('[name=author_name]').classList.add('is-invalid');
-  }
-  // use powerfull regex to check the email validation
-  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-  if (!email || !emailPattern.test(email)) {
-    document.querySelector('[name=author_email]').classList.add('is-invalid');
-  }
   if (!topicTitle) {
     document.querySelector('[name=topic_title]').classList.add('is-invalid');
   }
@@ -148,24 +142,32 @@ document.addEventListener('DOMContentLoaded', function () {
   const videoReqForm = document.getElementById('videoReqForm');
   const sortBySelectElms = document.querySelectorAll(`[id*=sort_by_]`);
   const searchInputElm = document.getElementById('search-box');
+  const loginFormElm = document.querySelector('.login-form');
+  const appContentElm = document.querySelector('.app-content');
 
+  if (window.location.search) {
+    state.userId = new URLSearchParams(window.location.search).get('id');
+    // add d-none class to the login form then remove it from the video request form
+    loginFormElm.classList.add('d-none');
+    appContentElm.classList.remove('d-none');
+  }
+
+  loadAllVidReqs();
   // send the search value to the server for loading the result
   searchInputElm.addEventListener(
     'input',
     debounce((e) => {
-      searchTerm = e.target.value;
-      loadAllVidReqs(sortBy, searchTerm);
+      state.searchTerm = e.target.value;
+      loadAllVidReqs(state.sortBy, state.searchTerm);
     }, 300)
   );
-
-  loadAllVidReqs();
 
   sortBySelectElms.forEach((elm) => {
     elm.addEventListener('click', function (e) {
       e.preventDefault();
 
-      sortBy = this.querySelector('input').value;
-      loadAllVidReqs(sortBy, searchTerm);
+      state.sortBy = this.querySelector('input').value;
+      loadAllVidReqs(state.sortBy, state.searchTerm);
       // Active the current Sort btn
       sortBySelectElms.forEach((e) => e.classList.remove('active'));
       this.classList.add('active');
@@ -177,7 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Get the data from the form to one variable
     const formData = new FormData(videoReqForm);
-
+    // Send User Id with the request
+    formData.append('author_id', state.userId);
     // Check validation of the form
     const isValid = checkFormValidity(formData);
 
