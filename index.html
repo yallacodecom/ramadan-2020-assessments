@@ -7,6 +7,15 @@
   <title>Semicolon | video request</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
 </head>
+<style>
+  .active_btn {
+    opacity: 1 !important;
+  }
+
+  #votContainer a {
+    opacity: 0.5;
+  }
+</style>
 
 <body>
   <div class="container my-5">
@@ -78,7 +87,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-success mt-3">
+          <button type="submit" class="btn btn-success mt-3 ">
             Send video request
           </button>
         </form>
@@ -100,7 +109,6 @@
           <input type="search" id="search-box" class="form-control" placeholder="Search here" />
         </div>
       </div>
-
       <div id="listOfRequests">
         <!-- Append the listOfVids here -->
       </div>

@@ -22,10 +22,10 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
             }
           </p>
         </div>
-        <div class="d-flex flex-column text-center">
+        <div id="votContainer" class="d-flex flex-column text-center">
           <a id="votes_ups_${vidInfo._id}" class="btn btn-link">🔺</a>
           <h3 id="score_votes_${vidInfo._id}">${
-    vidInfo.votes.ups - vidInfo.votes.downs
+    vidInfo.votes.ups.length - vidInfo.votes.downs.length
   }</h3>
           <a id="votes_downs_${vidInfo._id}" class="btn btn-link">🔻</a>
         </div>
@@ -54,17 +54,70 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
     listOfVidsElm.appendChild(vidReqContainerElm);
   }
   // Get Votes up and down buttons
-  const votesUpBtnElm = document.getElementById(`votes_ups_${vidInfo._id}`);
-  const votesDownBtnElm = document.getElementById(`votes_downs_${vidInfo._id}`);
-  // Add event listener to the votes up and down buttons
-  votesUpBtnElm.addEventListener('click', () => {
-    postVote(vidInfo._id, 'ups');
+  const votesElms = document.querySelectorAll(
+    `[id^=votes_][id$=_${vidInfo._id}]`
+  );
+
+  votesElms.forEach((elm) => {
+    elm.addEventListener('click', function (e) {
+      e.preventDefault();
+      // Destractur data I need from btn-id
+      const [, vote_type, id] = e.target.getAttribute('id').split('_');
+      postVote(id, vote_type, state.userId);
+    });
   });
-  votesDownBtnElm.addEventListener('click', () => {
-    postVote(vidInfo._id, 'downs');
-  });
+  // Active the current vote btn
+  activateBtn(vidInfo.votes, vidInfo._id);
 }
 
+function activateBtn(data, id, vote_type) {
+  // Return if there is no user id
+  if (!state.userId) {
+    console.warn('User is not authenticated.');
+    return;
+  }
+  // Check if the user has already voted
+  if (!vote_type) {
+    if (data.ups.includes(state.userId)) {
+      vote_type = 'ups';
+    } else if (data.downs.includes(state.userId)) {
+      vote_type = 'downs';
+    } else {
+      return;
+    }
+  }
+
+  const votesBtnsElms = document.querySelectorAll(`[id^=votes_][id$=_${id}]`);
+  votesBtnsElms.forEach((elm) => {
+    elm.classList.remove('active_btn');
+  });
+  if (data[`${vote_type}`].includes(state.userId)) {
+    document
+      .getElementById(`votes_${vote_type}_${id}`)
+      .classList.add('active_btn');
+  }
+}
+
+// postVote for post vote to the server
+function postVote(id, vote_type, user_id) {
+  // Get the score of votes
+  const scoreVotesElm = document.getElementById(`score_votes_${id}`);
+  fetch('http://localhost:7777/video-request/vote', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id, vote_type, user_id }),
+  })
+    .then((blob) => blob.json())
+    .then((data) => {
+      activateBtn(data, id, vote_type);
+      scoreVotesElm.innerText = data.ups.length - data.downs.length;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 function loadAllVidReqs(sortBy, searchTerm = '') {
   // Fetch all video requests
   fetch(
@@ -76,26 +129,6 @@ function loadAllVidReqs(sortBy, searchTerm = '') {
       data.forEach((vid) => {
         renderSingleVidReq(vid);
       });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-// postVote for post vote to the server
-function postVote(id, vote_type) {
-  // Get the score of votes
-  const scoreVotesElm = document.getElementById(`score_votes_${id}`);
-  fetch('http://localhost:7777/video-request/vote', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id, vote_type }),
-  })
-    .then((blob) => blob.json())
-    .then((data) => {
-      scoreVotesElm.innerText = data.ups - data.downs;
     })
     .catch((err) => {
       console.log(err);
