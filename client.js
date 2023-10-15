@@ -1,9 +1,10 @@
 const listOfVidsElm = document.getElementById('listOfRequests');
-
+const SUPER_USER_ID = '19980726';
 const state = {
   sortBy: 'newFirst',
   searchTerm: '',
   userId: '',
+  isSuperUser: false,
 };
 // Creating Video card for a single request
 function renderSingleVidReq(vidInfo, isPrepend = false) {
@@ -11,6 +12,36 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
   const vidReqContainerElm = document.createElement('div');
   vidReqContainerElm.className = 'card mb-3';
   vidReqContainerElm.innerHTML = `
+      ${
+        state.isSuperUser
+          ? `<div class="card-header d-flex justify-content-between">
+        <select id="admin_change_status_${vidInfo._id}" class="p-1 rounded ">
+          <option value="new">New</option>
+          <option value="planned">Planned</option>
+          <option value="done">Done</option>
+        </select>
+        <div id="admin_vid_res_container_${
+          vidInfo._id
+        }" class="input-group ml-2 mr-5 ${
+              vidInfo.status !== 'done' ? 'd-none' : ''
+            }">
+          <input id="admin_input_vid_res_${
+            vidInfo._id
+          }" type="text" class="form-control" placeholder="Paste here youtube video URL" />
+          <div class="input-group-append">
+            <button id="admin_save_vid_res_${
+              vidInfo._id
+            }" class="btn btn-outline-secondary" type="button">Save</button>
+          </div>
+        </div>
+        <div>
+          <button id="admin_delete_vid_req_${
+            vidInfo._id
+          }" class="btn btn-danger">delete</button>
+        </div>
+      </div>`
+          : ''
+      }
       <div class="card-body d-flex justify-content-between flex-row">
         <div class="d-flex flex-column">
           <h3>${vidInfo.topic_title}</h3>
@@ -22,13 +53,14 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
             }
           </p>
         </div>
-        <div id="votContainer" class="d-flex flex-column text-center">
+        <div id="votContainer" class="d-flex flex-column text-center"> 
           <a id="votes_ups_${vidInfo._id}" class="btn btn-link">🔺</a>
           <h3 id="score_votes_${vidInfo._id}">${
     vidInfo.votes.ups.length - vidInfo.votes.downs.length
   }</h3>
           <a id="votes_downs_${vidInfo._id}" class="btn btn-link">🔻</a>
         </div>
+          
       </div>
       <div class="card-footer d-flex flex-row justify-content-between">
         <div>
@@ -59,6 +91,10 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
   );
 
   votesElms.forEach((elm) => {
+    // Disable the vote btn For Super User
+    if (state.isSuperUser) {
+      elm.classList.add('disabled');
+    }
     elm.addEventListener('click', function (e) {
       e.preventDefault();
       // Destractur data I need from btn-id
@@ -68,6 +104,62 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
   });
   // Active the current vote btn
   activateBtn(vidInfo.votes, vidInfo._id);
+
+  if (state.isSuperUser) {
+    const adminChangeStatusElm = document.getElementById(
+      `admin_change_status_${vidInfo._id}`
+    );
+    const adminVidResContainerElm = document.getElementById(
+      `admin_vid_res_container_${vidInfo._id}`
+    );
+    const adminInputVidElm = document.getElementById(
+      `admin_input_vid_res_${vidInfo._id}`
+    );
+    const adminSaveVidElm = document.getElementById(
+      `admin_save_vid_res_${vidInfo._id}`
+    );
+    const deleteBtnElm = document.getElementById(
+      `admin_delete_vid_req_${vidInfo._id}`
+    );
+    // Change Video Status
+    adminChangeStatusElm.addEventListener('change', (e) => {
+      e.preventDefault();
+      if (e.target.value === 'done') {
+        adminVidResContainerElm.classList.remove('d-none');
+      } else {
+        changeVidStatus(vidInfo._id, e.target.value);
+      }
+    });
+
+    // Set the init video status
+    adminChangeStatusElm.value = vidInfo.status;
+    // If done put the video link from the database
+    adminInputVidElm.value = vidInfo.video_ref.link;
+
+    // Save Video Res
+    adminSaveVidElm.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!adminInputVidElm.value) {
+        adminInputVidElm.classList.add('is-invalid');
+        adminInputVidElm.addEventListener('input', function () {
+          this.classList.remove('is-invalid');
+        });
+        return;
+      }
+      changeVidStatus(vidInfo._id, 'done', adminInputVidElm.value);
+    });
+
+    // Delet Video Req
+    deleteBtnElm.addEventListener('click', function (e) {
+      e.preventDefault();
+      // Cofirom the delete
+      const isDelete = confirm(
+        `Are you sure you want to delete "${vidInfo.topic_title}"?`
+      );
+      if (!isDelete) return;
+      deleteVidReq(vidInfo._id);
+    });
+  }
 }
 
 function activateBtn(data, id, vote_type) {
@@ -169,7 +261,44 @@ function checkFormValidity(formData) {
   }
   return true;
 }
-
+// Change video status
+function changeVidStatus(id, status, resVideo = '') {
+  fetch('http://localhost:7777/video-request', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id, status, resVideo }),
+  })
+    .then((data) => data.json())
+    .then((data) => {
+      loadAllVidReqs();
+      console.log('Request Status Have been updated', data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+// Delete video request
+function deleteVidReq(id) {
+  fetch('http://localhost:7777/video-request', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id }),
+  })
+    .then((blob) => blob.json())
+    .then((data) => {
+      console.log('🚀 ~ file: client.js:202 ~ data:', data);
+    })
+    .then(() => {
+      loadAllVidReqs();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 // Use DOMContentLoaded event to make sure that the DOM is loaded before running the script
 document.addEventListener('DOMContentLoaded', function () {
   const videoReqForm = document.getElementById('videoReqForm');
@@ -180,6 +309,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (window.location.search) {
     state.userId = new URLSearchParams(window.location.search).get('id');
+
+    if (state.userId === SUPER_USER_ID) {
+      state.isSuperUser = true;
+      document.getElementById('normal-user-content').classList.add('d-none');
+    }
     // add d-none class to the login form then remove it from the video request form
     loginFormElm.classList.add('d-none');
     appContentElm.classList.remove('d-none');
