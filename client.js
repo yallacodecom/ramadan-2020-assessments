@@ -3,6 +3,7 @@ const SUPER_USER_ID = '19980726';
 const state = {
   sortBy: 'newFirst',
   searchTerm: '',
+  filterBy: 'all',
   userId: '',
   isSuperUser: false,
 };
@@ -52,7 +53,16 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
               `<strong>Expected results:</strong> ${vidInfo.expected_result}`
             }
           </p>
-        </div>
+                </div>
+        ${
+          vidInfo.status === 'done'
+            ? `
+              <div class=ml-auto mr-3>
+              <iframe width="240" height="135" src="https://www.youtube.com/embed/${vidInfo.video_ref.link}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              `
+            : ''
+        }
         <div id="votContainer" class="d-flex flex-column text-center"> 
           <a id="votes_ups_${vidInfo._id}" class="btn btn-link">🔺</a>
           <h3 id="score_votes_${vidInfo._id}">${
@@ -63,16 +73,33 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
           
       </div>
       <div class="card-footer d-flex flex-row justify-content-between">
-        <div>
-          <span class="text-info">${vidInfo.status.toUpperCase()}</span>
+        <div class="${
+          vidInfo.status === 'done'
+            ? 'text-success'
+            : vidInfo.status === 'planned'
+            ? 'text-primary'
+            : ''
+        } " >
+          <span">${vidInfo.status.toUpperCase()} ${
+    vidInfo.status === 'done'
+      ? `on <strong>${new Date(vidInfo.video_ref.date).toDateString()}`
+      : ''
+  }</strong></span>
           &bullet; added by <strong>${vidInfo.author_name}</strong> on
           <strong>${new Date(vidInfo.submit_date).toDateString()}</strong>
         </div>
         <div
           class="d-flex justify-content-center flex-column 408ml-auto mr-2"
         >
-          <div class="badge badge-success">
-          ${vidInfo.target_level}
+        <div>
+        ${
+          vidInfo.target_level == 'begineer'
+            ? `<div class="badge badge-success mr-2">Begginer</div>`
+            : vidInfo.target_level == 'medium'
+            ? `<div class="badge badge-warning mr-2">Medium</div>`
+            : `<div class="badge badge-primary mr-2">Advanced</div>`
+        }
+        </div>
           </div>
         </div>
       </div>
@@ -91,14 +118,18 @@ function renderSingleVidReq(vidInfo, isPrepend = false) {
   );
 
   votesElms.forEach((elm) => {
-    // Disable the vote btn For Super User
-    if (state.isSuperUser) {
+    // Disable the vote btn For Super User OR if the status is done
+    if (state.isSuperUser || vidInfo.status === 'done') {
       elm.classList.add('disabled');
     }
     elm.addEventListener('click', function (e) {
       e.preventDefault();
       // Destractur data I need from btn-id
       const [, vote_type, id] = e.target.getAttribute('id').split('_');
+      // Prevent voting and If the status is done
+      if (state.isSuperUser || vidInfo.status === 'done') {
+        return;
+      }
       postVote(id, vote_type, state.userId);
     });
   });
@@ -210,10 +241,10 @@ function postVote(id, vote_type, user_id) {
       console.log(err);
     });
 }
-function loadAllVidReqs(sortBy, searchTerm = '') {
+function loadAllVidReqs(sortBy, searchTerm = '', filterBy = 'all') {
   // Fetch all video requests
   fetch(
-    `http://localhost:7777/video-request?sortBy=${sortBy}&searchTerm=${searchTerm}`
+    `http://localhost:7777/video-request?sortBy=${sortBy}&searchTerm=${searchTerm}&filterBy=${filterBy} `
   )
     .then((blob) => blob.json())
     .then((data) => {
@@ -272,7 +303,7 @@ function changeVidStatus(id, status, resVideo = '') {
   })
     .then((data) => data.json())
     .then((data) => {
-      loadAllVidReqs();
+      loadAllVidReqs(state.filterBy);
       console.log('Request Status Have been updated', data);
     })
     .catch((err) => {
@@ -289,11 +320,8 @@ function deleteVidReq(id) {
     body: JSON.stringify({ id }),
   })
     .then((blob) => blob.json())
-    .then((data) => {
-      console.log('🚀 ~ file: client.js:202 ~ data:', data);
-    })
     .then(() => {
-      loadAllVidReqs();
+      loadAllVidReqs(state.filterBy);
     })
     .catch((err) => {
       console.log(err);
@@ -306,6 +334,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const searchInputElm = document.getElementById('search-box');
   const loginFormElm = document.querySelector('.login-form');
   const appContentElm = document.querySelector('.app-content');
+  const filterByInputsElms = document.querySelectorAll(`[id*=filter_by_]`);
+
+  filterByInputsElms.forEach((elm) => {
+    elm.addEventListener('click', function (e) {
+      e.preventDefault();
+      state.filterBy = this.querySelector('input').value;
+      loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
+      // Active the current Sort btn
+      filterByInputsElms.forEach((e) => e.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
 
   if (window.location.search) {
     state.userId = new URLSearchParams(window.location.search).get('id');
@@ -325,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
     'input',
     debounce((e) => {
       state.searchTerm = e.target.value;
-      loadAllVidReqs(state.sortBy, state.searchTerm);
+      loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
     }, 300)
   );
 
@@ -334,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
 
       state.sortBy = this.querySelector('input').value;
-      loadAllVidReqs(state.sortBy, state.searchTerm);
+      loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
       // Active the current Sort btn
       sortBySelectElms.forEach((e) => e.classList.remove('active'));
       this.classList.add('active');

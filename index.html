@@ -106,16 +106,32 @@
             Voted
           </label>
         </div>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-info active " id="filter_by_all">
+            <input type="radio" name="options" value="all" checked> All
+          </label>
+          <label class="btn btn-info " id="filter_by_new">
+            <input type="radio" name="options" value="new"> New
+          </label>
+          <label class="btn btn-info " id="filter_by_planned">
+            <input type="radio" name="options" value="planned"> Planned
+          </label>
+          <label class="btn btn-info" id="filter_by_done">
+            <input type="radio" name="options" value="done"> Done
+          </label>
+        </div>
         <div>
           <input type="search" id="search-box" class="form-control" placeholder="Search here" />
         </div>
       </div>
 
-      <div id="listOfRequests">
-        <!-- Append the listOfVids here -->
-      </div>
+
     </div>
-    <script src="/client.js"></script>
+    <div id="listOfRequests">
+      <!-- Append the listOfVids here -->
+    </div>
+  </div>
+  <script src="/client.js"></script>
 </body>
 
 </html>

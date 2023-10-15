@@ -28,12 +28,12 @@ app.post('/video-request', upload.none(), async (req, res, next) => {
 
 app.get('/video-request', async (req, res, next) => {
   // Using Query for sorting
-  const { sortBy, searchTerm } = req.query;
+  const { sortBy, searchTerm, filterBy } = req.query;
   let data;
   if (searchTerm) {
-    data = await VideoRequestData.searchRequests(searchTerm);
+    data = await VideoRequestData.searchRequests(searchTerm, filterBy);
   } else {
-    data = await VideoRequestData.getAllVideoRequests();
+    data = await VideoRequestData.getAllVideoRequests(filterBy);
   }
   // Sort data based on votes = topVotedFirst
   if (sortBy === 'topVotedFirst') {
