@@ -1,6 +1,5 @@
-import { postVote } from './postVote.js';
 import { activateBtn } from './activateBtn.js';
-import API from './api.js';
+import dataService from './dataService.js';
 
 const listOfVidsElm = document.getElementById('listOfRequests');
 
@@ -126,11 +125,10 @@ export function renderSingleVidReq(vidInfo, state, isPrepend = false) {
       if (state.isSuperUser || vidInfo.status === 'done') {
         return;
       }
-      postVote(id, vote_type, state.userId, state);
+      dataService.updateVotes(id, vote_type, state.userId, state);
     });
   });
 
-  // TODO: Find out if it has any effect
   //  Active the current vote btn
   activateBtn(vidInfo.votes, vidInfo._id, null, state.userId);
 
@@ -156,7 +154,7 @@ export function renderSingleVidReq(vidInfo, state, isPrepend = false) {
       if (e.target.value === 'done') {
         adminVidResContainerElm.classList.remove('d-none');
       } else {
-        API.changeVidStatus(vidInfo._id, e.target.value);
+        dataService.changeVidStatus(vidInfo._id, e.target.value);
       }
     });
 
@@ -175,7 +173,7 @@ export function renderSingleVidReq(vidInfo, state, isPrepend = false) {
         });
         return;
       }
-      API.changeVidStatus(vidInfo._id, 'done', adminInputVidElm.value);
+      dataService.changeVidStatus(vidInfo._id, 'done', adminInputVidElm.value);
     });
 
     // Delet Video Req
@@ -186,7 +184,7 @@ export function renderSingleVidReq(vidInfo, state, isPrepend = false) {
         `Are you sure you want to delete "${vidInfo.topic_title}"?`
       );
       if (!isDelete) return;
-      API.deleteVidReq(vidInfo._id);
+      dataService.deleteVidReq(vidInfo._id);
     });
   }
 }

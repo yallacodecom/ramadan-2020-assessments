@@ -48,25 +48,31 @@ module.exports = {
     const other_type = vote_type === 'ups' ? 'downs' : 'ups';
 
     const oldVoteList = oldRequest.votes[vote_type];
-    const otherVoteList = oldRequest.votes[other_type];
-
+    const oldOtherList = oldRequest.votes[other_type];
     if (!oldVoteList.includes(user_id)) {
       oldVoteList.push(user_id);
     } else {
-      oldVoteList.splice(user_id);
+      const userIndex = oldVoteList.indexOf(user_id);
+      oldVoteList.splice(userIndex, 1);
+      // oldVoteList.splice(user_id);
     }
-    if (otherVoteList.includes(user_id)) {
-      otherVoteList.splice(user_id);
+
+    if (oldOtherList.includes(user_id)) {
+      const userIndex = oldOtherList.indexOf(user_id);
+      oldOtherList.splice(userIndex, 1);
+
+      // oldOtherList.splice(user_id, 1);
     }
+
     return VideoRequest.findByIdAndUpdate(
       { _id: id },
       {
         votes: {
           [vote_type]: oldVoteList,
-          [other_type]: otherVoteList,
+          [other_type]: oldOtherList,
         },
       },
-      { new: true } // By default it returns the old object before update
+      { new: true }
     );
   },
 

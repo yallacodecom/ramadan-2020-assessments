@@ -1,7 +1,7 @@
 import { debounce } from './debounce.js';
 import { renderSingleVidReq } from './renderSingleVidReq.js';
 import { checkFormValidity } from './checkFormValidity.js';
-import API from './api.js';
+import dataService from './dataService.js';
 
 const SUPER_USER_ID = '19980726';
 export const state = {
@@ -33,13 +33,17 @@ document.addEventListener('DOMContentLoaded', function () {
     appContentElm.classList.remove('d-none');
   }
 
-  API.loadAllVidReqs(state);
+  dataService.loadAllVidReqs(state);
   // send the search value to the server for loading the result
   searchInputElm.addEventListener(
     'input',
     debounce((e) => {
       state.searchTerm = e.target.value;
-      API.loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
+      dataService.loadAllVidReqs(
+        state.sortBy,
+        state.searchTerm,
+        state.filterBy
+      );
     }, 300)
   );
 
@@ -48,7 +52,11 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
 
       state.sortBy = this.querySelector('input').value;
-      API.loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
+      dataService.loadAllVidReqs(
+        state.sortBy,
+        state.searchTerm,
+        state.filterBy
+      );
       // Active the current Sort btn
       sortBySelectElms.forEach((e) => e.classList.remove('active'));
       this.classList.add('active');
@@ -59,7 +67,11 @@ document.addEventListener('DOMContentLoaded', function () {
     elm.addEventListener('click', function (e) {
       e.preventDefault();
       state.filterBy = this.querySelector('input').value;
-      API.loadAllVidReqs(state.sortBy, state.searchTerm, state.filterBy);
+      dataService.loadAllVidReqs(
+        state.sortBy,
+        state.searchTerm,
+        state.filterBy
+      );
       // Active the current Sort btn
       filterByInputsElms.forEach((e) => e.classList.remove('active'));
       this.classList.add('active');
@@ -78,12 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!isValid) return;
 
-    // Send the data using post method using fetch api
-    fetch('http://localhost:7777/video-request', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((res) => res.json())
+    // Add new video request to the server
+
+    dataService
+      .addNewVidReq(formData)
       .then((data) => {
         renderSingleVidReq(data, state, true);
       })
